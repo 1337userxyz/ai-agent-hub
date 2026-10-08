@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=KI Agent Hub
+GenericName=AI Agent Control Center
+Comment=KDE Control Center für Aider, Open Interpreter & Ollama Model Downloader
+Exec=nix-shell -p python3Packages.pyqt6 --run "python3 /etc/nixos/ai-agent-hub.py"
+Icon=utilities-terminal
+Terminal=false
+Type=Application
+Categories=Development;System;Utility;
+Keywords=AI;Aider;Ollama;Interpreter;LLM;
+StartupNotify=true
