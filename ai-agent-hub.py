@@ -289,6 +289,10 @@ class AIAgentHub(QMainWindow):
         self.setMinimumSize(960, 750)
         self.config = load_config()
 
+        icon_path = "/home/tristan/.local/share/icons/ai-agent-hub.svg"
+        if os.path.exists(icon_path):
+            self.setWindowIcon(QIcon(icon_path))
+
         self.active_workers = {}
         self.download_widgets = {}
         self.copilot_worker = None
@@ -426,9 +430,12 @@ class AIAgentHub(QMainWindow):
         info_row = QHBoxLayout()
         self.lbl_active_models = QLabel("Geladene Modelle im RAM: Keine")
         self.lbl_active_models.setStyleSheet("color: #27ae60; font-size: 12px;")
+        self.lbl_disk = QLabel("💾 SSD: Prüfe...")
+        self.lbl_disk.setStyleSheet("color: #3daee9; font-size: 12px; margin-right: 14px;")
         self.lbl_server_status = QLabel("🟢 Ollama Server: Online")
         self.lbl_server_status.setStyleSheet("color: #2ecc71; font-weight: bold; font-size: 12px;")
         info_row.addWidget(self.lbl_active_models, stretch=1)
+        info_row.addWidget(self.lbl_disk)
         info_row.addWidget(self.lbl_server_status)
         header_layout.addLayout(info_row)
 
@@ -816,6 +823,19 @@ class AIAgentHub(QMainWindow):
         btn_start.setStyleSheet("background-color: #8e44ad; color: white; font-size: 14px; padding: 10px;")
         btn_start.clicked.connect(self.launch_self_dev)
         layout.addWidget(btn_start)
+
+        # Sicherheitsprüfung: NixOS Test
+        safety_group = QGroupBox("🧪 NixOS Sicherheitsprüfung")
+        s_layout = QVBoxLayout(safety_group)
+        self.btn_dry_build = QPushButton("🧪 Konfiguration testen (nixos-rebuild dry-build)")
+        self.btn_dry_build.setStyleSheet("background-color: #16a085; color: white; padding: 9px; font-size: 13px;")
+        self.btn_dry_build.clicked.connect(self.action_test_nixos)
+        self.lbl_dry_build_status = QLabel("Bereit zum Testen deiner Änderungen")
+        self.lbl_dry_build_status.setStyleSheet("color: #95a5a6; font-size: 11px;")
+        s_layout.addWidget(self.btn_dry_build)
+        s_layout.addWidget(self.lbl_dry_build_status)
+        layout.addWidget(safety_group)
+
         layout.addStretch()
 
         return tab
@@ -1081,6 +1101,33 @@ class AIAgentHub(QMainWindow):
         cmd = f"aider --model ollama/{model} {files_str}"
         self.run_in_terminal(cmd, workdir="/etc/nixos")
 
+    def action_test_nixos(self):
+        self.btn_dry_build.setEnabled(False)
+        self.lbl_dry_build_status.setText("⏳ Führe 'nixos-rebuild dry-build' aus...")
+        self.lbl_dry_build_status.setStyleSheet("color: #f39c12; font-weight: bold;")
+
+        import threading
+        def _run():
+            try:
+                res = subprocess.run(["nixos-rebuild", "dry-build"], capture_output=True, text=True, timeout=120)
+                if res.returncode == 0:
+                    QTimer.singleShot(0, lambda: self._on_nixos_tested(True, "✔ Keine Syntaxfehler! NixOS baut 100% sauber."))
+                else:
+                    err = res.stderr[-250:] if res.stderr else "Fehler aufgetreten"
+                    QTimer.singleShot(0, lambda: self._on_nixos_tested(False, f"❌ Fehler beim Bauen:\n{err}"))
+            except Exception as e:
+                QTimer.singleShot(0, lambda: self._on_nixos_tested(False, str(e)))
+
+        threading.Thread(target=_run, daemon=True).start()
+
+    def _on_nixos_tested(self, success, msg):
+        self.btn_dry_build.setEnabled(True)
+        self.lbl_dry_build_status.setText(msg)
+        if success:
+            self.lbl_dry_build_status.setStyleSheet("color: #2ecc71; font-weight: bold;")
+        else:
+            self.lbl_dry_build_status.setStyleSheet("color: #e74c3c; font-weight: bold;")
+
     def launch_duo(self):
         m1 = self.combo_aider_model.currentData() or "qwen2.5-coder:14b"
         m2 = self.combo_oi_model.currentData() or "qwen2.5-coder:14b"
@@ -1115,6 +1162,12 @@ class AIAgentHub(QMainWindow):
 
             self.bar_ram.setValue(pct)
             self.bar_ram.setFormat(f"{used_gb:.1f} GB / {total_gb:.1f} GB ({pct}%) • {free_gb:.1f} GB frei")
+
+            # Festplatten-Freispeicher ermitteln
+            import shutil
+            _, _, free_disk_bytes = shutil.disk_usage("/")
+            free_disk_gb = free_disk_bytes / (1024 * 1024 * 1024)
+            self.lbl_disk.setText(f"💾 SSD: {free_disk_gb:.0f} GB frei")
 
             if pct > 85:
                 color = "#e74c3c"

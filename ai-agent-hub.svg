@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#090d16" />
+      <stop offset="50%" stop-color="#111827" />
+      <stop offset="100%" stop-color="#1e1035" />
+    </linearGradient>
+
+    <!-- Border Glow Gradient -->
+    <linearGradient id="glowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00f2fe" />
+      <stop offset="50%" stop-color="#3b82f6" />
+      <stop offset="100%" stop-color="#a855f7" />
+    </linearGradient>
+
+    <!-- Brain / Circuit Gradient -->
+    <linearGradient id="cyberGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#06b6d4" />
+      <stop offset="50%" stop-color="#3b82f6" />
+      <stop offset="100%" stop-color="#ec4899" />
+    </linearGradient>
+
+    <filter id="glowFilter" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="6" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Base Rounded Container -->
+  <rect x="12" y="12" width="232" height="232" rx="52" fill="url(#bgGrad)" stroke="url(#glowGrad)" stroke-width="6" />
+
+  <!-- Inner Cyber Grid / Shield Accent -->
+  <rect x="24" y="24" width="208" height="208" rx="42" fill="none" stroke="#ffffff" stroke-opacity="0.06" stroke-width="2" />
+
+  <!-- AI Brain / Circuit Core -->
+  <g filter="url(#glowFilter)">
+    <!-- Circuit Connections Top -->
+    <path d="M 128 48 L 128 72" stroke="url(#cyberGrad)" stroke-width="4" stroke-linecap="round" />
+    <circle cx="128" cy="46" r="5" fill="#00f2fe" />
+
+    <path d="M 88 56 L 102 78" stroke="url(#cyberGrad)" stroke-width="4" stroke-linecap="round" />
+    <circle cx="86" cy="54" r="5" fill="#3b82f6" />
+
+    <path d="M 168 56 L 154 78" stroke="url(#cyberGrad)" stroke-width="4" stroke-linecap="round" />
+    <circle cx="170" cy="54" r="5" fill="#ec4899" />
+
+    <!-- Central Brain Left Hemisphere -->
+    <path d="M 120 78 C 92 78 70 96 70 120 C 70 134 78 146 88 154 C 84 166 90 180 102 184 C 110 186 118 184 120 180" 
+          fill="none" stroke="url(#cyberGrad)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+
+    <!-- Central Brain Right Hemisphere -->
+    <path d="M 136 78 C 164 78 186 96 186 120 C 186 134 178 146 168 154 C 172 166 166 180 154 184 C 146 186 138 184 136 180" 
+          fill="none" stroke="url(#cyberGrad)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+
+    <!-- Internal Neural Nodes & Connections -->
+    <line x1="120" y1="102" x2="94" y2="116" stroke="#00f2fe" stroke-width="3.5" stroke-linecap="round" />
+    <circle cx="94" cy="116" r="5" fill="#00f2fe" />
+
+    <line x1="136" y1="102" x2="162" y2="116" stroke="#ec4899" stroke-width="3.5" stroke-linecap="round" />
+    <circle cx="162" cy="116" r="5" fill="#ec4899" />
+
+    <line x1="94" y1="116" x2="112" y2="140" stroke="#3b82f6" stroke-width="3.5" stroke-linecap="round" />
+    <line x1="162" y1="116" x2="144" y2="140" stroke="#a855f7" stroke-width="3.5" stroke-linecap="round" />
+    <line x1="112" y1="140" x2="144" y2="140" stroke="#ffffff" stroke-width="3" stroke-linecap="round" />
+
+    <circle cx="112" cy="140" r="5.5" fill="#3b82f6" />
+    <circle cx="144" cy="140" r="5.5" fill="#a855f7" />
+    <circle cx="128" cy="102" r="6" fill="#ffffff" />
+
+    <line x1="128" y1="102" x2="128" y2="140" stroke="#3b82f6" stroke-width="3" stroke-dasharray="3,3" />
+
+    <!-- Brain Stem / Output -->
+    <path d="M 120 180 L 128 196 L 136 180" stroke="url(#cyberGrad)" stroke-width="5" fill="none" stroke-linejoin="round" />
+    <line x1="128" y1="196" x2="128" y2="216" stroke="#a855f7" stroke-width="4" stroke-linecap="round" />
+    <circle cx="128" cy="218" r="6" fill="#ec4899" />
+
+    <path d="M 108 206 L 128 218 L 148 206" stroke="url(#cyberGrad)" stroke-width="3.5" fill="none" stroke-linecap="round" />
+  </g>
+</svg>
